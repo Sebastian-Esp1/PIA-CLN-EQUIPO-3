@@ -1,0 +1,3535 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Sazón Urbano · API de lógica de negocio",
+    "description": "\nAPI REST de **Sazón Urbano**: pedidos, cocina por estaciones, disponibilidad, inventario,\npromociones y reportes. Implementa DDD (Pedido, Producto, Ingrediente, Promoción), Specification,\nuna máquina de estados del pedido y CQRS básico.\n\n**Cómo probarla en Swagger:** todos los endpoints funcionan con los valores por defecto de los\nencabezados (`X-Usuario` = `demo`, `X-Rol` = `ENCARGADO`). Cambie `X-Rol` a `MESERO`, `COCINERO` o\n`GERENTE` para ver cómo cambian los permisos. Los datos de ejemplo del docente se cargan con\n`POST /admin/importar-csv`.\n\n**Códigos de respuesta:** 200/201 éxito · 400 solicitud mal formada · 403 rol sin permiso ·\n404 recurso inexistente · 409 regla de negocio o estado incompatible · 422 datos inválidos.\n",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Estado del servicio",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Iniciar pedido (CU-01)",
+        "operationId": "iniciar_pedido_pedidos_post",
+        "parameters": [
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Listar pedidos",
+        "operationId": "listar_pedidos_pedidos_get",
+        "parameters": [
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "examples": [
+                "EN_REGISTRO"
+              ],
+              "title": "Estado"
+            }
+          },
+          {
+            "name": "limite",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 500,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limite"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PedidoOut"
+                  },
+                  "title": "Response Listar Pedidos Pedidos Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Consultar un pedido",
+        "operationId": "consultar_pedido_pedidos__pedido_id__get",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/lineas": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Agregar producto (CU-01 / CU-02: rechaza si no hay disponibilidad)",
+        "operationId": "agregar_producto_pedidos__pedido_id__lineas_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineaIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineaAgregadaOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/lineas/{linea_id}/modificaciones": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Agregar modificación o extra a una línea (RN-03)",
+        "operationId": "agregar_modificacion_pedidos__pedido_id__lineas__linea_id__modificaciones_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "linea_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Linea Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ModificacionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/autorizar": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Autorizar pedido",
+        "operationId": "autorizar_pedido_pedidos__pedido_id__autorizar_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/confirmar": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Confirmar pedido y enviarlo a cocina (CU-01)",
+        "operationId": "confirmar_pedido_pedidos__pedido_id__confirmar_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/cancelar": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Cancelar pedido con motivo (CU-04)",
+        "operationId": "cancelar_pedido_pedidos__pedido_id__cancelar_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelacionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/cerrar": {
+      "post": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Cerrar (entregar) pedido",
+        "operationId": "cerrar_pedido_pedidos__pedido_id__cerrar_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pedidos/{pedido_id}/historial": {
+      "get": {
+        "tags": [
+          "Pedidos"
+        ],
+        "summary": "Historial de cambios del pedido (US-12)",
+        "operationId": "historial_pedidos__pedido_id__historial_get",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HistorialOut"
+                  },
+                  "title": "Response Historial Pedidos  Pedido Id  Historial Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cocina/estaciones/{estacion}/ordenes": {
+      "get": {
+        "tags": [
+          "Cocina"
+        ],
+        "summary": "Órdenes de una estación (US-07)",
+        "operationId": "ordenes_de_estacion_cocina_estaciones__estacion__ordenes_get",
+        "parameters": [
+          {
+            "name": "estacion",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Estacion"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrdenEstacionOut"
+                  },
+                  "title": "Response Ordenes De Estacion Cocina Estaciones  Estacion  Ordenes Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cocina/pedidos/{pedido_id}/lineas/{linea_id}/iniciar": {
+      "post": {
+        "tags": [
+          "Cocina"
+        ],
+        "summary": "Iniciar preparación de una línea",
+        "operationId": "iniciar_preparacion_cocina_pedidos__pedido_id__lineas__linea_id__iniciar_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "linea_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Linea Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cocina/pedidos/{pedido_id}/lineas/{linea_id}/listo": {
+      "post": {
+        "tags": [
+          "Cocina"
+        ],
+        "summary": "Marcar línea como lista (US-08)",
+        "operationId": "marcar_linea_lista_cocina_pedidos__pedido_id__lineas__linea_id__listo_post",
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Pedido Id"
+            }
+          },
+          {
+            "name": "linea_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Linea Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LineaListaOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/disponibilidad": {
+      "get": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Disponibilidad de productos (US-04)",
+        "operationId": "disponibilidad_productos_disponibilidad_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DisponibilidadOut"
+                  },
+                  "type": "array",
+                  "title": "Response Disponibilidad Productos Disponibilidad Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/{producto_id}/agotar": {
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Marcar agotado (US-05)",
+        "operationId": "agotar_productos__producto_id__agotar_post",
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Producto Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductoEstadoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/{producto_id}/reactivar": {
+      "post": {
+        "tags": [
+          "Productos"
+        ],
+        "summary": "Reactivar producto (US-05)",
+        "operationId": "reactivar_productos__producto_id__reactivar_post",
+        "parameters": [
+          {
+            "name": "producto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Producto Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductoEstadoOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventario/ingredientes": {
+      "get": {
+        "tags": [
+          "Inventario"
+        ],
+        "summary": "Existencias",
+        "operationId": "ingredientes_inventario_ingredientes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IngredienteOut"
+                  },
+                  "type": "array",
+                  "title": "Response Ingredientes Inventario Ingredientes Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventario/criticos": {
+      "get": {
+        "tags": [
+          "Inventario"
+        ],
+        "summary": "Ingredientes críticos (US-10)",
+        "operationId": "criticos_inventario_criticos_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CriticoOut"
+                  },
+                  "type": "array",
+                  "title": "Response Criticos Inventario Criticos Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventario/ingredientes/{ingrediente_id}/movimientos": {
+      "post": {
+        "tags": [
+          "Inventario"
+        ],
+        "summary": "Registrar entrada o salida (US-09)",
+        "operationId": "movimiento_inventario_ingredientes__ingrediente_id__movimientos_post",
+        "parameters": [
+          {
+            "name": "ingrediente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ingrediente Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MovimientoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredienteOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventario/ingredientes/{ingrediente_id}/conteo": {
+      "post": {
+        "tags": [
+          "Inventario"
+        ],
+        "summary": "Registrar conteo físico (US-09)",
+        "operationId": "conteo_inventario_ingredientes__ingrediente_id__conteo_post",
+        "parameters": [
+          {
+            "name": "ingrediente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ingrediente Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConteoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredienteOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inventario/ingredientes/{ingrediente_id}/umbral": {
+      "put": {
+        "tags": [
+          "Inventario"
+        ],
+        "summary": "Definir umbral crítico (SP-03)",
+        "operationId": "umbral_inventario_ingredientes__ingrediente_id__umbral_put",
+        "parameters": [
+          {
+            "name": "ingrediente_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ingrediente Id"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UmbralIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngredienteOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/promociones": {
+      "post": {
+        "tags": [
+          "Promociones"
+        ],
+        "summary": "Configurar promoción",
+        "operationId": "configurar_promocion_promociones_post",
+        "parameters": [
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromocionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromocionOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reportes/ventas": {
+      "get": {
+        "tags": [
+          "Reportes"
+        ],
+        "summary": "Ventas por periodo (US-13)",
+        "operationId": "ventas_reportes_ventas_get",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-01-01T00:00:00"
+              ],
+              "title": "Desde"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-12-31T23:59:59"
+              ],
+              "title": "Hasta"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VentaOut"
+                  },
+                  "title": "Response Ventas Reportes Ventas Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reportes/comparativo-inventario": {
+      "get": {
+        "tags": [
+          "Reportes"
+        ],
+        "summary": "Comparativo ventas vs. inventario (US-14)",
+        "operationId": "comparativo_reportes_comparativo_inventario_get",
+        "parameters": [
+          {
+            "name": "desde",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-01-01T00:00:00"
+              ],
+              "title": "Desde"
+            }
+          },
+          {
+            "name": "hasta",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "examples": [
+                "2026-12-31T23:59:59"
+              ],
+              "title": "Hasta"
+            }
+          },
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ComparativoOut"
+                  },
+                  "title": "Response Comparativo Reportes Comparativo Inventario Get"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/importar-csv": {
+      "post": {
+        "tags": [
+          "Administración"
+        ],
+        "summary": "Cargar el paquete de datos del docente (idempotente)",
+        "operationId": "importar_csv_admin_importar_csv_post",
+        "parameters": [
+          {
+            "name": "x-usuario",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Identificador del usuario que opera",
+              "default": "demo",
+              "title": "X-Usuario"
+            },
+            "description": "Identificador del usuario que opera"
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "MESERO, COCINERO, ENCARGADO o GERENTE",
+              "default": "ENCARGADO",
+              "title": "X-Rol"
+            },
+            "description": "MESERO, COCINERO, ENCARGADO o GERENTE"
+          },
+          {
+            "name": "x-api-key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Solo si el servidor define API_KEY",
+              "title": "X-Api-Key"
+            },
+            "description": "Solo si el servidor define API_KEY"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportacionOut"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "El rol no tiene permiso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "El recurso no existe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Regla de negocio o estado incompatible",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Datos inválidos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorOut"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CancelacionIn": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "title": "Motivo",
+            "examples": [
+              "El cliente cambió de opinión"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "motivo"
+        ],
+        "title": "CancelacionIn"
+      },
+      "CancelacionOut": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "title": "Motivo"
+          },
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "motivo",
+          "usuario",
+          "fecha"
+        ],
+        "title": "CancelacionOut"
+      },
+      "ComparativoOut": {
+        "properties": {
+          "ingrediente_id": {
+            "type": "string",
+            "title": "Ingrediente Id"
+          },
+          "ingrediente": {
+            "type": "string",
+            "title": "Ingrediente"
+          },
+          "existencia_esperada": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Existencia Esperada"
+          },
+          "existencia_registrada": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Existencia Registrada"
+          },
+          "diferencia": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Diferencia"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingrediente_id",
+          "ingrediente",
+          "existencia_esperada",
+          "existencia_registrada",
+          "diferencia"
+        ],
+        "title": "ComparativoOut"
+      },
+      "ConteoIn": {
+        "properties": {
+          "cantidad_contada": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Cantidad Contada",
+            "examples": [
+              "25"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "cantidad_contada"
+        ],
+        "title": "ConteoIn"
+      },
+      "CriticoOut": {
+        "properties": {
+          "ingrediente_id": {
+            "type": "string",
+            "title": "Ingrediente Id"
+          },
+          "ingrediente": {
+            "type": "string",
+            "title": "Ingrediente"
+          },
+          "existencia": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Existencia"
+          },
+          "umbral": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Umbral"
+          },
+          "productos_afectados": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Productos Afectados"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingrediente_id",
+          "ingrediente",
+          "existencia",
+          "umbral",
+          "productos_afectados"
+        ],
+        "title": "CriticoOut"
+      },
+      "DisponibilidadOut": {
+        "properties": {
+          "producto_id": {
+            "type": "string",
+            "title": "Producto Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "disponible": {
+            "type": "boolean",
+            "title": "Disponible"
+          },
+          "motivo": {
+            "type": "string",
+            "title": "Motivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "producto_id",
+          "nombre",
+          "disponible",
+          "motivo"
+        ],
+        "title": "DisponibilidadOut"
+      },
+      "ErrorOut": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "title": "Codigo",
+            "examples": [
+              "PEDIDO_NO_PROCESABLE"
+            ]
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje",
+            "examples": [
+              "El pedido no puede procesarse: el cliente debe estar activo."
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensaje"
+        ],
+        "title": "ErrorOut"
+      },
+      "HistorialOut": {
+        "properties": {
+          "accion": {
+            "type": "string",
+            "title": "Accion"
+          },
+          "usuario": {
+            "type": "string",
+            "title": "Usuario"
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha"
+          },
+          "detalle": {
+            "type": "string",
+            "title": "Detalle"
+          }
+        },
+        "type": "object",
+        "required": [
+          "accion",
+          "usuario",
+          "fecha",
+          "detalle"
+        ],
+        "title": "HistorialOut"
+      },
+      "ImportacionOut": {
+        "properties": {
+          "clientes": {
+            "type": "integer",
+            "title": "Clientes"
+          },
+          "productos": {
+            "type": "integer",
+            "title": "Productos"
+          },
+          "pedidos": {
+            "type": "integer",
+            "title": "Pedidos"
+          },
+          "lineas": {
+            "type": "integer",
+            "title": "Lineas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "clientes",
+          "productos",
+          "pedidos",
+          "lineas"
+        ],
+        "title": "ImportacionOut"
+      },
+      "IngredienteOut": {
+        "properties": {
+          "ingrediente_id": {
+            "type": "string",
+            "title": "Ingrediente Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "existencia": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Existencia"
+          },
+          "umbral": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Umbral"
+          },
+          "es_critico": {
+            "type": "boolean",
+            "title": "Es Critico"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingrediente_id",
+          "nombre",
+          "existencia",
+          "umbral",
+          "es_critico"
+        ],
+        "title": "IngredienteOut"
+      },
+      "LineaAgregadaOut": {
+        "properties": {
+          "agregado": {
+            "type": "boolean",
+            "title": "Agregado"
+          },
+          "motivo": {
+            "type": "string",
+            "title": "Motivo"
+          },
+          "pedido": {
+            "$ref": "#/components/schemas/PedidoOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "agregado",
+          "motivo",
+          "pedido"
+        ],
+        "title": "LineaAgregadaOut"
+      },
+      "LineaIn": {
+        "properties": {
+          "producto_id": {
+            "type": "string",
+            "title": "Producto Id",
+            "examples": [
+              "PED-P001"
+            ]
+          },
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad",
+            "description": "Entero mayor a cero",
+            "examples": [
+              2
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "producto_id",
+          "cantidad"
+        ],
+        "title": "LineaIn"
+      },
+      "LineaListaOut": {
+        "properties": {
+          "pedido_listo": {
+            "type": "boolean",
+            "title": "Pedido Listo"
+          },
+          "pedido": {
+            "$ref": "#/components/schemas/PedidoOut"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pedido_listo",
+          "pedido"
+        ],
+        "title": "LineaListaOut"
+      },
+      "LineaOut": {
+        "properties": {
+          "linea_id": {
+            "type": "integer",
+            "title": "Linea Id"
+          },
+          "producto_id": {
+            "type": "string",
+            "title": "Producto Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad"
+          },
+          "precio_unitario": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Precio Unitario"
+          },
+          "subtotal": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Subtotal"
+          },
+          "estacion": {
+            "type": "string",
+            "title": "Estacion"
+          },
+          "estado_preparacion": {
+            "type": "string",
+            "title": "Estado Preparacion"
+          },
+          "modificaciones": {
+            "items": {
+              "$ref": "#/components/schemas/ModificacionOut"
+            },
+            "type": "array",
+            "title": "Modificaciones"
+          }
+        },
+        "type": "object",
+        "required": [
+          "linea_id",
+          "producto_id",
+          "cantidad",
+          "precio_unitario",
+          "subtotal",
+          "estacion",
+          "estado_preparacion",
+          "modificaciones"
+        ],
+        "title": "LineaOut"
+      },
+      "ModificacionIn": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "title": "Tipo",
+            "description": "QUITAR, CAMBIAR o AGREGAR",
+            "examples": [
+              "QUITAR"
+            ]
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion",
+            "examples": [
+              "Sin cebolla"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo",
+          "descripcion"
+        ],
+        "title": "ModificacionIn"
+      },
+      "ModificacionOut": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "title": "Tipo"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo",
+          "descripcion"
+        ],
+        "title": "ModificacionOut"
+      },
+      "MovimientoIn": {
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "title": "Tipo",
+            "description": "ENTRADA o SALIDA",
+            "examples": [
+              "ENTRADA"
+            ]
+          },
+          "cantidad": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Cantidad",
+            "examples": [
+              "10"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "tipo",
+          "cantidad"
+        ],
+        "title": "MovimientoIn"
+      },
+      "OrdenEstacionOut": {
+        "properties": {
+          "pedido_id": {
+            "type": "string",
+            "title": "Pedido Id"
+          },
+          "canal": {
+            "type": "string",
+            "title": "Canal"
+          },
+          "linea_id": {
+            "type": "integer",
+            "title": "Linea Id"
+          },
+          "producto": {
+            "type": "string",
+            "title": "Producto"
+          },
+          "cantidad": {
+            "type": "integer",
+            "title": "Cantidad"
+          },
+          "modificaciones": {
+            "items": {
+              "$ref": "#/components/schemas/ModificacionOut"
+            },
+            "type": "array",
+            "title": "Modificaciones"
+          },
+          "estado_preparacion": {
+            "type": "string",
+            "title": "Estado Preparacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pedido_id",
+          "canal",
+          "linea_id",
+          "producto",
+          "cantidad",
+          "modificaciones",
+          "estado_preparacion"
+        ],
+        "title": "OrdenEstacionOut"
+      },
+      "PedidoIn": {
+        "properties": {
+          "canal": {
+            "type": "string",
+            "title": "Canal",
+            "description": "MESA, TELEFONO, WHATSAPP o DOMICILIO",
+            "examples": [
+              "MESA"
+            ]
+          },
+          "cliente_id": {
+            "type": "string",
+            "title": "Cliente Id",
+            "examples": [
+              "PED-C001"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "canal",
+          "cliente_id"
+        ],
+        "title": "PedidoIn"
+      },
+      "PedidoOut": {
+        "properties": {
+          "pedido_id": {
+            "type": "string",
+            "title": "Pedido Id"
+          },
+          "canal": {
+            "type": "string",
+            "title": "Canal"
+          },
+          "cliente_id": {
+            "type": "string",
+            "title": "Cliente Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado"
+          },
+          "autorizado": {
+            "type": "boolean",
+            "title": "Autorizado"
+          },
+          "promocion_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promocion Id"
+          },
+          "beneficio_aplicado": {
+            "type": "boolean",
+            "title": "Beneficio Aplicado"
+          },
+          "total": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total"
+          },
+          "descuento": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Descuento"
+          },
+          "total_a_pagar": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total A Pagar"
+          },
+          "lineas": {
+            "items": {
+              "$ref": "#/components/schemas/LineaOut"
+            },
+            "type": "array",
+            "title": "Lineas"
+          },
+          "cancelacion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CancelacionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "pedido_id",
+          "canal",
+          "cliente_id",
+          "estado",
+          "autorizado",
+          "promocion_id",
+          "beneficio_aplicado",
+          "total",
+          "descuento",
+          "total_a_pagar",
+          "lineas"
+        ],
+        "title": "PedidoOut"
+      },
+      "ProductoEstadoOut": {
+        "properties": {
+          "producto_id": {
+            "type": "string",
+            "title": "Producto Id"
+          },
+          "agotado": {
+            "type": "boolean",
+            "title": "Agotado"
+          }
+        },
+        "type": "object",
+        "required": [
+          "producto_id",
+          "agotado"
+        ],
+        "title": "ProductoEstadoOut"
+      },
+      "PromocionIn": {
+        "properties": {
+          "promocion_id": {
+            "type": "string",
+            "title": "Promocion Id",
+            "examples": [
+              "PROMO-HAPPY"
+            ]
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre",
+            "examples": [
+              "Happy hour"
+            ]
+          },
+          "hora_inicio": {
+            "type": "string",
+            "title": "Hora Inicio",
+            "examples": [
+              "16:00"
+            ]
+          },
+          "hora_fin": {
+            "type": "string",
+            "title": "Hora Fin",
+            "examples": [
+              "19:00"
+            ]
+          },
+          "total_minimo": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Minimo",
+            "examples": [
+              "300"
+            ]
+          },
+          "canales": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Canales",
+            "examples": [
+              [
+                "MESA"
+              ]
+            ]
+          },
+          "descuento_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Descuento Pct",
+            "default": "10",
+            "examples": [
+              "10"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "promocion_id",
+          "nombre",
+          "hora_inicio",
+          "hora_fin"
+        ],
+        "title": "PromocionIn"
+      },
+      "PromocionOut": {
+        "properties": {
+          "promocion_id": {
+            "type": "string",
+            "title": "Promocion Id"
+          },
+          "vigente": {
+            "type": "boolean",
+            "title": "Vigente"
+          }
+        },
+        "type": "object",
+        "required": [
+          "promocion_id",
+          "vigente"
+        ],
+        "title": "PromocionOut"
+      },
+      "UmbralIn": {
+        "properties": {
+          "umbral": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Umbral",
+            "examples": [
+              "5"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "umbral"
+        ],
+        "title": "UmbralIn"
+      },
+      "VentaOut": {
+        "properties": {
+          "pedido_id": {
+            "type": "string",
+            "title": "Pedido Id"
+          },
+          "canal": {
+            "type": "string",
+            "title": "Canal"
+          },
+          "fecha_cierre": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha Cierre"
+          },
+          "total_productos": {
+            "type": "integer",
+            "title": "Total Productos"
+          },
+          "total_importe": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Importe"
+          }
+        },
+        "type": "object",
+        "required": [
+          "pedido_id",
+          "canal",
+          "fecha_cierre",
+          "total_productos",
+          "total_importe"
+        ],
+        "title": "VentaOut"
+      }
+    }
+  }
+}
