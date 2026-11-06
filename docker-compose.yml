@@ -1,0 +1,48 @@
+# Base de datos + aplicación + pruebas.
+#   docker compose up --build            -> API en http://localhost:8000/docs
+#   docker compose --profile test run --rm tests   -> ejecuta Ruff + pytest con cobertura sobre PostgreSQL
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sazon}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sazon_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-sazon_urbano}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-sazon} -d $${POSTGRES_DB:-sazon_urbano}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      target: prod
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-sazon}:${POSTGRES_PASSWORD:-sazon_dev}@db:5432/${POSTGRES_DB:-sazon_urbano}
+      SEED_ON_START: ${SEED_ON_START:-true}
+      APP_TIMEZONE: ${APP_TIMEZONE:-America/Monterrey}
+      API_KEY: ${API_KEY:-}
+      APP_ENV: ${APP_ENV:-development}
+    ports:
+      - "${PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tests:
+    profiles: ["test"]
+    build:
+      context: .
+      target: test
+    environment:
+      # Las pruebas de integración usan SQLite en memoria; esta variable sirve a la prueba de PostgreSQL.
+      TEST_DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-sazon}:${POSTGRES_PASSWORD:-sazon_dev}@db:5432/${POSTGRES_DB:-sazon_urbano}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

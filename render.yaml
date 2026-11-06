@@ -1,0 +1,25 @@
+# Blueprint de Render: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: sazon-urbano-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerTarget: prod
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sazon-urbano-db
+          property: connectionString
+      - key: SEED_ON_START
+        value: "true"
+      - key: APP_ENV
+        value: production
+      - key: APP_TIMEZONE
+        value: America/Monterrey
+databases:
+  - name: sazon-urbano-db
+    plan: free
+    databaseName: sazon_urbano
+    user: sazon
