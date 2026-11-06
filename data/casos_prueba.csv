@@ -1,0 +1,121 @@
+﻿caso_id,operacion_id,tipo_prueba,regla_a_verificar,resultado_alumno,instrucciones
+PED-T001,PED-O001,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B001,PED-O001,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T002,PED-O002,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B002,PED-O002,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T003,PED-O003,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B003,PED-O003,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T004,PED-O004,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B004,PED-O004,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T005,PED-O005,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B005,PED-O005,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T006,PED-O006,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B006,PED-O006,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T007,PED-O007,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B007,PED-O007,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T008,PED-O008,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B008,PED-O008,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T009,PED-O009,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B009,PED-O009,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T010,PED-O010,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B010,PED-O010,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T011,PED-O011,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B011,PED-O011,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T012,PED-O012,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B012,PED-O012,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T013,PED-O013,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B013,PED-O013,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T014,PED-O014,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B014,PED-O014,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T015,PED-O015,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B015,PED-O015,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T016,PED-O016,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B016,PED-O016,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T017,PED-O017,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B017,PED-O017,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T018,PED-O018,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B018,PED-O018,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T019,PED-O019,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B019,PED-O019,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T020,PED-O020,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B020,PED-O020,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T021,PED-O021,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B021,PED-O021,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T022,PED-O022,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B022,PED-O022,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T023,PED-O023,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B023,PED-O023,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T024,PED-O024,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B024,PED-O024,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T025,PED-O025,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B025,PED-O025,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T026,PED-O026,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B026,PED-O026,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T027,PED-O027,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B027,PED-O027,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T028,PED-O028,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B028,PED-O028,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T029,PED-O029,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B029,PED-O029,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T030,PED-O030,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B030,PED-O030,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T031,PED-O031,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B031,PED-O031,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T032,PED-O032,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B032,PED-O032,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T033,PED-O033,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B033,PED-O033,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T034,PED-O034,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B034,PED-O034,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T035,PED-O035,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B035,PED-O035,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T036,PED-O036,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B036,PED-O036,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T037,PED-O037,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B037,PED-O037,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T038,PED-O038,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B038,PED-O038,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T039,PED-O039,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B039,PED-O039,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T040,PED-O040,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B040,PED-O040,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T041,PED-O041,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B041,PED-O041,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T042,PED-O042,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B042,PED-O042,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T043,PED-O043,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B043,PED-O043,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T044,PED-O044,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B044,PED-O044,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T045,PED-O045,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B045,PED-O045,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T046,PED-O046,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B046,PED-O046,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T047,PED-O047,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B047,PED-O047,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T048,PED-O048,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B048,PED-O048,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T049,PED-O049,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B049,PED-O049,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T050,PED-O050,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B050,PED-O050,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T051,PED-O051,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B051,PED-O051,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T052,PED-O052,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B052,PED-O052,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T053,PED-O053,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B053,PED-O053,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T054,PED-O054,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B054,PED-O054,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T055,PED-O055,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B055,PED-O055,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T056,PED-O056,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B056,PED-O056,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T057,PED-O057,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B057,PED-O057,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T058,PED-O058,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B058,PED-O058,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T059,PED-O059,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B059,PED-O059,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT
+PED-T060,PED-O060,validar_operacion,validar cliente activo AND detalle no vacio AND autorizacion,PENDIENTE,Verificar precondiciones en dominio
+PED-B060,PED-O060,evaluar_beneficio,VIP AND total >=1500 AND NOT promocion,PENDIENTE,Composicion Specification AND/NOT

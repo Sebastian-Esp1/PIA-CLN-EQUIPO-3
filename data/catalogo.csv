@@ -1,0 +1,21 @@
+﻿recurso_id,descripcion,precio_mxn,capacidad_o_stock,habilitado
+PED-P001,Hamburguesa 01,290.00,13,1
+PED-P002,Ensalada 02,361.00,16,1
+PED-P003,Pasta 03,432.00,19,1
+PED-P004,Bebida 04,503.00,22,1
+PED-P005,Hamburguesa 05,574.00,25,1
+PED-P006,Ensalada 06,645.00,28,1
+PED-P007,Pasta 07,716.00,31,1
+PED-P008,Bebida 08,787.00,34,1
+PED-P009,Hamburguesa 09,858.00,37,1
+PED-P010,Ensalada 10,929.00,40,1
+PED-P011,Pasta 11,1000.00,43,0
+PED-P012,Bebida 12,1071.00,46,1
+PED-P013,Hamburguesa 13,1142.00,49,1
+PED-P014,Ensalada 14,1213.00,52,1
+PED-P015,Pasta 15,1284.00,10,1
+PED-P016,Bebida 16,1355.00,13,1
+PED-P017,Hamburguesa 17,1426.00,16,1
+PED-P018,Ensalada 18,1497.00,19,1
+PED-P019,Pasta 19,1568.00,22,1
+PED-P020,Bebida 20,1639.00,25,1

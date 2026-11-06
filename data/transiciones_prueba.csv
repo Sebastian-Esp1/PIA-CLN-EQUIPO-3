@@ -1,0 +1,21 @@
+﻿caso_id,operacion_id,accion_sugerida,estado_inicial,resultado_alumno,instrucciones
+PED-S001,PED-O001,completar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S002,PED-O002,cancelar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S003,PED-O003,repetir_aprobacion,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S004,PED-O004,saltar_estado,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S005,PED-O005,aprobar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S006,PED-O006,completar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S007,PED-O007,cancelar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S008,PED-O008,repetir_aprobacion,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S009,PED-O009,saltar_estado,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S010,PED-O010,aprobar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S011,PED-O011,completar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S012,PED-O012,cancelar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S013,PED-O013,repetir_aprobacion,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S014,PED-O014,saltar_estado,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S015,PED-O015,aprobar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S016,PED-O016,completar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S017,PED-O017,cancelar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S018,PED-O018,repetir_aprobacion,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S019,PED-O019,saltar_estado,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
+PED-S020,PED-O020,aprobar,CREADO,PENDIENTE,Ejecutar la operacion y registrar evento o excepcion
