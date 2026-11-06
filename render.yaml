@@ -4,7 +4,6 @@ services:
     name: sazon-urbano-api
     runtime: docker
     dockerfilePath: ./Dockerfile
-    dockerTarget: prod
     plan: free
     healthCheckPath: /health
     envVars:
