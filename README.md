@@ -78,6 +78,6 @@ curl -s $H -X POST localhost:8000/pedidos/<ID>/cancelar -d '{"motivo":"el client
 BRD → regla → historia → caso de uso → componente → prueba: `docs/architecture/trazabilidad.md`.
 
 ## Limitaciones declaradas
-- BRD, historias y glosario de `docs/` están **reconstruidos** del informe de la Unidad 3; sustituir por los originales si se tienen.
+- Los PDF originales de la Unidad 2 (BRD, historias, glosario, BPMN) están en `docs/requirements/originales_unidad2/`; los Gherkin se ampliaron con escenarios de error.
 - La autenticación por encabezados no es criptográfica (ADR-09).
 - Seguimiento del repartidor fuera de alcance (SP-07).

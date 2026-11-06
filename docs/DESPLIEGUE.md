@@ -34,4 +34,3 @@ Alternativa Railway: New Project → Deploy from GitHub → agregar plugin Postg
 
 ## 5. Antes de la defensa
 - [ ] README con URLs reales · [ ] CI verde · [ ] despliegue vivo y probado con el orden de la demo.
-- [ ] Si tienes el BRD, historias, glosario y BPMN originales de la Unidad 2: reemplaza `docs/BRD.md`, `docs/requirements/user_stories.md`, `docs/architecture/glosario.md` (la trazabilidad usa solo los IDs).

@@ -19,6 +19,6 @@ Cambiar rol: encabezados `X-Rol` y `X-Usuario` en Swagger (botón *Try it out*).
 | ¿Qué defecto encontraron con las pruebas? | Choque de nombres entre un parámetro y un dato del evento al agregar modificaciones; corregido y cubierto. |
 | ¿Qué pasa si dos usuarios editan el mismo pedido? | `UPDATE … WHERE version = ?`; el segundo recibe 409 CONFLICTO_DE_CONCURRENCIA (`test_concurrencia_optimista…`). |
 | ¿Por qué Python y no C# como en la Unidad 3? | OpenAPI automático, despliegue gratuito y experiencia del equipo; se conservaron los nombres de la Unidad 3 (ADR-05). |
-| ¿Qué falta o qué limitaciones hay? | BRD/historias reconstruidos del informe si no se tienen los originales; seguimiento del repartidor fuera de alcance (SP-07); ventas se actualizan en memoria (en producción, una cola). |
+| ¿Qué falta o qué limitaciones hay? | los Gherkin originales son un escenario por historia y se ampliaron con casos de error; seguimiento del repartidor fuera de alcance (SP-07); ventas se actualizan en memoria (en producción, una cola). |
 | ¿Cómo garantizan 12-Factor? | Configuración en variables de entorno (`config.py`, `.env.example`), logs a stdout, build y run separados (Dockerfile multi-etapa), sin secretos en el repo. |
 | ¿Quién hizo qué? | Respuesta honesta según el reparto real del equipo (el trabajo del PIA fue individual si así ocurrió; decláralo). |

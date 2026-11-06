@@ -1,16 +1,16 @@
 # Historias de usuario US-01..US-15 con criterios Gherkin
 
-> **Procedencia.** Las 15 historias de la Unidad 2 se reconstruyen a partir de sus referencias en el *Informe de arquitectura*
-> de la Unidad 3 (reglas RN, casos de uso CU y matriz de trazabilidad). Los criterios Gherkin se redactaron para que sean
-> ejecutables contra la API. **Si el equipo conserva las historias originales, deben reemplazar este archivo**; la matriz de
-> trazabilidad (`docs/architecture/trazabilidad.md`) usa solo los identificadores US-xx, por lo que seguirá vigente.
+> **Procedencia.** Historias US-01..US-15 de la Unidad 2 (`originales_unidad2/User Story.pdf`). El enunciado «Como…
+> quiero… para…» es el original; los criterios Gherkin se detallaron para que sean ejecutables contra la API (los originales
+> son un Given/When/Then por historia, que aquí se amplían con escenarios de error). Nota: en el PDF original, el *story mapping*
+> de US-02 menciona promociones; por su enunciado y criterio corresponde a modificaciones y extras, y así se implementó.
 
 Formato: *Como* <rol> *quiero* <acción> *para* <beneficio>. Cada historia indica sus reglas (RN), caso de uso (CU), la prueba
 que la verifica y el endpoint.
 
 ---
-## US-01 Registrar un pedido
-**Como** mesero **quiero** iniciar un pedido para un cliente en un canal **para** controlar lo que se vende. (RN-01, CU-01, N-01)
+## US-01 Registrar un pedido con productos y cantidades
+**Como** mesero/cajero **quiero** registrar un pedido con productos y cantidades **para** que la orden quede correctamente capturada. (RN-01, CU-01, N-01)
 ```gherkin
 Escenario: Iniciar pedido con canal válido
   Dado un cliente existente y un usuario con rol MESERO
@@ -35,17 +35,20 @@ Escenario: Tipo de modificación inválido
 ```
 Prueba: `test_pedido.py::test_modificaciones_se_asocian_a_la_linea`, `test_api_flujos.py::test_cu01_modificaciones_extras_por_linea` · `POST /pedidos/{id}/lineas/{n}/modificaciones`
 
-## US-03 Registrar productos y cantidades
-**Como** mesero **quiero** agregar productos con cantidad **para** formar el pedido. (RN-01, CU-01)
+## US-03 Seleccionar el canal de venta
+**Como** mesero/cajero **quiero** seleccionar el canal (mesa, teléfono, WhatsApp o domicilio) **para** identificar su origen. (RN-01, CU-01)
 ```gherkin
-Escenario: Cantidad válida
+Escenario: Canal válido
+  Cuando inicio un pedido con canal "WHATSAPP"
+  Entonces el canal queda guardado en el pedido
+Escenario: Cantidad válida (US-01)
   Cuando agrego 2 unidades de un producto disponible
   Entonces el total del pedido es 2 x precio
 Escenario: Cantidad cero o negativa
   Cuando agrego 0 unidades
   Entonces el sistema responde 422 DATO_INVALIDO
 ```
-Prueba: `test_pedido.py::test_cantidad_debe_ser_entero_positivo`, `test_api_flujos.py::test_cantidades_invalidas_son_422` · `POST /pedidos/{id}/lineas`
+Prueba: `test_pedido.py::test_canal_invalido_se_rechaza`, `test_cantidad_debe_ser_entero_positivo`, `test_api_flujos.py::test_codigos_http_del_contrato` · `POST /pedidos`, `POST /pedidos/{id}/lineas`
 
 ## US-04 Rechazar productos no disponibles
 **Como** mesero **quiero** que el sistema rechace un producto agotado **para** no vender lo que no se puede preparar. (RN-02, RN-12, CU-02, N-03, N-06)
@@ -191,7 +194,7 @@ Escenario: Comparativo
 Prueba: `test_api_flujos.py::test_reportes_de_ventas_y_comparativo` · `GET /reportes/comparativo-inventario`
 
 ## US-15 Configurar y aplicar promociones
-**Como** encargado **quiero** definir promociones con horario y condiciones **para** aplicarlas automáticamente. (RN-13, N-08)
+**Como** gerente **quiero** configurar promociones con horario y condiciones **para** aplicarlas automáticamente. (RN-13, N-08)
 ```gherkin
 Escenario: Promoción vigente y dentro de horario
   Dado una promoción 00:00-23:59 con total mínimo 100 y 10 % de descuento

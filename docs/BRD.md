@@ -1,9 +1,7 @@
 # BRD — Sazón Urbano: sincronía entre pedidos, cocina, ventas e inventario
 
-> **Procedencia.** Este documento reúne el BRD de la Unidad 2 tal como lo recoge el *Informe de arquitectura* de la Unidad 3
-> (empresa, problema, alcance, necesidades N-01..N-08, restricciones y supuestos). Si el equipo conserva el BRD original en
-> Word, ese archivo manda y esta versión debe sustituirse o contrastarse con él. Lo que no estaba definido en la Unidad 2
-> aparece marcado como **supuesto (SP-xx)**.
+> **Procedencia.** BRD de la Unidad 2 (original en `requirements/originales_unidad2/BRD.pdf`), reorganizado en Markdown. Los supuestos SP-xx
+> vienen del informe de la Unidad 3 y se marcan como tales.
 
 ## 1. Contexto
 Sazón Urbano es un negocio de alimentos con servicio en mesa, para llevar y entrega a domicilio. Sus ingresos provienen de
@@ -15,6 +13,11 @@ parrilla, preparación fría, bebidas y empaque. El inventario se revisa princip
 Falta de sincronía entre pedidos, cocina, ventas e inventario: productos agotados que no se actualizan, órdenes incompletas,
 diferencias entre ventas e inventario, modificaciones y cancelaciones difíciles de rastrear y productos registrados sin
 disponibilidad real.
+
+## 2.1 Oportunidad
+Centralizar pedidos, disponibilidad, modificaciones, cancelaciones e inventario para reducir errores, mejorar la coordinación entre áreas,
+dar visibilidad de la disponibilidad, reducir diferencias entre ventas e inventario, facilitar el seguimiento de pedidos y obtener
+información confiable para decidir.
 
 ## 3. Objetivo
 Contar con una lógica de negocio que haga cumplir las reglas del proceso de pedidos (disponibilidad, estados, trazabilidad,
@@ -85,14 +88,25 @@ inventario y promociones) de forma centralizada y verificable, expuesta mediante
 | SP-08 | Cancelar en Confirmado reintegra ingredientes; en EnPreparación no (merma) | Implementado y probado |
 | SP-09 | Autenticación y roles en infraestructura | Implementado con encabezados `X-Usuario`/`X-Rol` y `X-API-Key` opcional |
 
-## 9. Restricciones
+## 9. Restricciones (BRD original)
+- La operación debe seguir atendiendo diferentes canales de pedido.
+- El sistema debe adaptarse a los procesos actuales de Sazón Urbano.
+- Los empleados deben poder usarlo sin conocimientos técnicos avanzados.
+- La información debe mantenerse consistente entre pedidos, ventas e inventario.
+- Las operaciones de cocina no deben interrumpirse por procesos administrativos.
+- El control de inventario depende de que las existencias registradas sean correctas.
+- Las promociones pueden tener condiciones y horarios específicos que deben respetarse.
 - Las modificaciones y cancelaciones deben considerar el estado del pedido.
-- Las promociones solo aplican dentro de su horario y condiciones.
-- Los datos del paquete del docente son ficticios (MXN, ISO 8601).
+- (PIA) Los datos del paquete del docente son ficticios (MXN, ISO 8601).
 
-## 10. Criterios de éxito
-1. No se confirma un pedido con productos no disponibles ni con existencia insuficiente.
-2. Todo cambio y cancelación deja usuario, fecha, hora y motivo.
-3. El inventario esperado se actualiza al confirmar y se reintegra al cancelar según SP-08.
-4. Gerencia puede consultar ventas por periodo y el comparativo contra inventario.
-5. El servicio corre en un despliegue público con documentación OpenAPI, pruebas con cobertura ≥ 80 % y CI/CD activo.
+## 10. Criterios de éxito (BRD original) y cómo se verifican
+| Criterio | Resultado esperado | Verificación en el PIA |
+|---|---|---|
+| Exactitud de pedidos | Menos errores por información incompleta o modificaciones no comunicadas | Modificaciones por línea visibles en cocina (US-02, US-06) |
+| Disponibilidad | Menos pedidos con productos que luego resultan agotados | Rechazo 409 y confirmación con descuento transaccional (US-04) |
+| Inventario | Menos diferencias entre ventas y existencias | Consumo al confirmar, reintegro al cancelar, comparativo (US-14) |
+| Trazabilidad | Identificar modificaciones y cancelaciones | Historial inmutable con usuario, fecha y motivo (US-11, US-12) |
+| Operación de cocina | Órdenes claras y completas por estación | Consulta por estación (US-07) |
+| Gestión de pedidos | Conocer el estado del pedido de registro a entrega | Máquina de estados y `GET /pedidos/{id}` |
+| Promociones | Aplicarlas según sus condiciones | `Promocion` + `EvaluadorPromociones` (US-15) |
+| Toma de decisiones | Información confiable para el gerente | Reportes de ventas y comparativo (US-13, US-14) |
