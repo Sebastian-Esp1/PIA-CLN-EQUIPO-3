@@ -129,6 +129,7 @@ def test_punto_de_entrada_construye_la_app_desde_el_entorno(monkeypatch, tmp_pat
     monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path / 'arranque.db'}")
     import src.api.principal as principal
 
+    principal.app.state.contenedor.motor.dispose()  # la primera importación ya creó una app
     principal = importlib.reload(principal)
     try:
         assert principal.app.title.startswith("Sazón Urbano")
