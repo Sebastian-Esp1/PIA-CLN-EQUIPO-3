@@ -4,7 +4,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, FastAPI, Header, HTTPException, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from src.api import esquemas as es
 from src.api.contenedor import Contenedor, construir_contenedor
@@ -14,17 +15,59 @@ from src.domain import errors as er
 from src.infrastructure import importacion_csv
 
 DESCRIPCION = """
-API REST de **Sazón Urbano**: pedidos, cocina por estaciones, disponibilidad, inventario,
-promociones y reportes. Implementa DDD (Pedido, Producto, Ingrediente, Promoción), Specification,
-una máquina de estados del pedido y CQRS básico.
+## Bienvenido a la API de Sazón Urbano
 
-**Cómo probarla en Swagger:** todos los endpoints funcionan con los valores por defecto de los
-encabezados (`X-Usuario` = `demo`, `X-Rol` = `ENCARGADO`). Cambie `X-Rol` a `MESERO`, `COCINERO` o
-`GERENTE` para ver cómo cambian los permisos. Los datos de ejemplo del docente se cargan con
-`POST /admin/importar-csv`.
+Controla el ciclo completo de un pedido de restaurante: **registro, disponibilidad, cocina por estaciones,
+inventario, promociones, cancelaciones con trazabilidad y reportes**. Las reglas del negocio viven en el servidor,
+así que un pedido no se confirma si falta existencia, si el cliente está inactivo o si no está autorizado.
 
-**Códigos de respuesta:** 200/201 éxito · 400 solicitud mal formada · 403 rol sin permiso ·
-404 recurso inexistente · 409 regla de negocio o estado incompatible · 422 datos inválidos.
+### Cómo probarla en 5 pasos
+1. Abra **POST /pedidos** → *Try it out* → `{"canal": "MESA", "cliente_id": "PED-C001"}` → *Execute*. Copie el `pedido_id`.
+2. **POST /pedidos/{pedido_id}/lineas** con `{"producto_id": "PED-P001", "cantidad": 2}`.
+3. **POST /pedidos/{pedido_id}/autorizar**.
+4. **POST /pedidos/{pedido_id}/confirmar**: el pedido pasa a `CONFIRMADO` y se descuenta el inventario.
+5. **GET /pedidos/{pedido_id}/historial**: vea quién hizo cada cambio y cuándo.
+
+Pruebe también un producto agotado (`PED-P011`) para ver el rechazo, o confirmar dos veces para ver el error 409.
+
+### Roles (encabezado `X-Rol`)
+| Rol | Puede |
+|---|---|
+| `MESERO` | Registrar, autorizar, confirmar y cerrar pedidos |
+| `COCINERO` | Preparar líneas y consultar su estación |
+| `ENCARGADO` (por defecto) | Todo lo anterior, cancelar, inventario, catálogo, promociones y reportes |
+| `GERENTE` | Todo |
+
+### Códigos de respuesta
+`200` correcto · `201` creado · `400` solicitud inválida · `403` el rol no tiene permiso ·
+`404` no existe · `409` regla de negocio o estado incompatible · `422` datos inválidos.
+Los errores de negocio devuelven `{"codigo": "...", "mensaje": "..."}` en lenguaje claro.
+"""
+
+ETIQUETAS = [
+    {"name": "Pedidos", "description": "Registrar, modificar, autorizar, confirmar, cancelar y cerrar pedidos. Incluye el historial de cambios."},
+    {"name": "Cocina", "description": "Cada estación ve solo sus productos, inicia su preparación y marca las líneas como listas."},
+    {"name": "Productos", "description": "Disponibilidad de productos y marcado manual de agotados."},
+    {"name": "Inventario", "description": "Existencias de ingredientes, entradas y salidas, conteos y alertas de ingredientes críticos."},
+    {"name": "Promociones", "description": "Promociones con horario y condiciones; se aplican solas al confirmar un pedido."},
+    {"name": "Reportes", "description": "Ventas por periodo y comparativo entre ventas e inventario para gerencia."},
+    {"name": "Administración", "description": "Carga de los datos de ejemplo del docente (idempotente)."},
+    {"name": "Sistema", "description": "Estado del servicio."},
+]
+
+ESTILO_DOCS = """
+<style>
+.swagger-ui .topbar { display:none }
+.swagger-ui .info { margin:32px 0 }
+.swagger-ui .info .title { color:#1B5E3A; font-weight:700 }
+.swagger-ui .opblock-tag { font-size:20px; border-bottom:2px solid #D3EAD9 }
+.swagger-ui .opblock.opblock-post { border-color:#1B5E3A; background:rgba(27,94,58,.06) }
+.swagger-ui .opblock.opblock-post .opblock-summary-method { background:#1B5E3A }
+.swagger-ui .btn.execute { background:#1B5E3A; border-color:#1B5E3A }
+.swagger-ui .info table { border-collapse:collapse; margin:12px 0 }
+.swagger-ui .info table th, .swagger-ui .info table td { border:1px solid #D3EAD9; padding:6px 12px }
+.swagger-ui .info table th { background:#EEF6F0 }
+</style>
 """
 
 ESTADO_HTTP = {
@@ -369,6 +412,16 @@ def crear_app(contenedor: Contenedor | None = None) -> FastAPI:
         description=DESCRIPCION,
         version="1.0.0",
         lifespan=vida,
+        openapi_tags=ETIQUETAS,
+        docs_url=None,
+        swagger_ui_parameters={
+            "docExpansion": "none",
+            "defaultModelsExpandDepth": -1,
+            "displayRequestDuration": True,
+            "filter": True,
+            "tryItOutEnabled": True,
+            "persistAuthorization": True,
+        },
     )
     app.state.contenedor = contenedor or construir_contenedor()
 
@@ -376,6 +429,20 @@ def crear_app(contenedor: Contenedor | None = None) -> FastAPI:
     async def manejar_error_de_dominio(_: Request, exc: er.ErrorDeDominio):
         estado = next((c for t, c in ESTADO_HTTP.items() if type(exc) is t), 409)
         return JSONResponse(status_code=estado, content={"codigo": exc.codigo, "mensaje": exc.mensaje})
+
+    @app.get("/", include_in_schema=False)
+    def inicio():
+        return RedirectResponse("/docs")
+
+    @app.get("/docs", include_in_schema=False)
+    def documentacion():
+        pagina = get_swagger_ui_html(
+            openapi_url=app.openapi_url,
+            title="Sazón Urbano · API",
+            swagger_ui_parameters=app.swagger_ui_parameters,
+        )
+        cuerpo = pagina.body.decode().replace("</head>", ESTILO_DOCS + "</head>")
+        return HTMLResponse(cuerpo)
 
     @app.get("/health", tags=["Sistema"], summary="Estado del servicio")
     def health():

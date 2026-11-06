@@ -40,7 +40,11 @@ def test_health_y_documentacion_openapi(api):
     esquema = api.get("/openapi.json").json()
     assert esquema["info"]["title"].startswith("Sazón Urbano")
     assert "/pedidos/{pedido_id}/confirmar" in esquema["paths"]
-    assert api.get("/docs").status_code == 200
+    pagina = api.get("/docs")
+    assert pagina.status_code == 200 and "Sazón Urbano" in pagina.text and "swagger-ui" in pagina.text
+    assert [t["name"] for t in esquema["tags"]][0] == "Pedidos"
+    inicio = api.get("/", follow_redirects=False)
+    assert inicio.status_code in (302, 307) and inicio.headers["location"] == "/docs"
 
 
 def test_cu01_registrar_y_confirmar_descuenta_inventario_en_una_transaccion(api):

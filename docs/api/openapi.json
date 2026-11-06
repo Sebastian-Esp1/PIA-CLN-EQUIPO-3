@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Sazón Urbano · API de lógica de negocio",
-    "description": "\nAPI REST de **Sazón Urbano**: pedidos, cocina por estaciones, disponibilidad, inventario,\npromociones y reportes. Implementa DDD (Pedido, Producto, Ingrediente, Promoción), Specification,\nuna máquina de estados del pedido y CQRS básico.\n\n**Cómo probarla en Swagger:** todos los endpoints funcionan con los valores por defecto de los\nencabezados (`X-Usuario` = `demo`, `X-Rol` = `ENCARGADO`). Cambie `X-Rol` a `MESERO`, `COCINERO` o\n`GERENTE` para ver cómo cambian los permisos. Los datos de ejemplo del docente se cargan con\n`POST /admin/importar-csv`.\n\n**Códigos de respuesta:** 200/201 éxito · 400 solicitud mal formada · 403 rol sin permiso ·\n404 recurso inexistente · 409 regla de negocio o estado incompatible · 422 datos inválidos.\n",
+    "description": "\n## Bienvenido a la API de Sazón Urbano\n\nControla el ciclo completo de un pedido de restaurante: **registro, disponibilidad, cocina por estaciones,\ninventario, promociones, cancelaciones con trazabilidad y reportes**. Las reglas del negocio viven en el servidor,\nasí que un pedido no se confirma si falta existencia, si el cliente está inactivo o si no está autorizado.\n\n### Cómo probarla en 5 pasos\n1. Abra **POST /pedidos** → *Try it out* → `{\"canal\": \"MESA\", \"cliente_id\": \"PED-C001\"}` → *Execute*. Copie el `pedido_id`.\n2. **POST /pedidos/{pedido_id}/lineas** con `{\"producto_id\": \"PED-P001\", \"cantidad\": 2}`.\n3. **POST /pedidos/{pedido_id}/autorizar**.\n4. **POST /pedidos/{pedido_id}/confirmar**: el pedido pasa a `CONFIRMADO` y se descuenta el inventario.\n5. **GET /pedidos/{pedido_id}/historial**: vea quién hizo cada cambio y cuándo.\n\nPruebe también un producto agotado (`PED-P011`) para ver el rechazo, o confirmar dos veces para ver el error 409.\n\n### Roles (encabezado `X-Rol`)\n| Rol | Puede |\n|---|---|\n| `MESERO` | Registrar, autorizar, confirmar y cerrar pedidos |\n| `COCINERO` | Preparar líneas y consultar su estación |\n| `ENCARGADO` (por defecto) | Todo lo anterior, cancelar, inventario, catálogo, promociones y reportes |\n| `GERENTE` | Todo |\n\n### Códigos de respuesta\n`200` correcto · `201` creado · `400` solicitud inválida · `403` el rol no tiene permiso ·\n`404` no existe · `409` regla de negocio o estado incompatible · `422` datos inválidos.\nLos errores de negocio devuelven `{\"codigo\": \"...\", \"mensaje\": \"...\"}` en lenguaje claro.\n",
     "version": "1.0.0"
   },
   "paths": {
@@ -3531,5 +3531,39 @@
         "title": "VentaOut"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Pedidos",
+      "description": "Registrar, modificar, autorizar, confirmar, cancelar y cerrar pedidos. Incluye el historial de cambios."
+    },
+    {
+      "name": "Cocina",
+      "description": "Cada estación ve solo sus productos, inicia su preparación y marca las líneas como listas."
+    },
+    {
+      "name": "Productos",
+      "description": "Disponibilidad de productos y marcado manual de agotados."
+    },
+    {
+      "name": "Inventario",
+      "description": "Existencias de ingredientes, entradas y salidas, conteos y alertas de ingredientes críticos."
+    },
+    {
+      "name": "Promociones",
+      "description": "Promociones con horario y condiciones; se aplican solas al confirmar un pedido."
+    },
+    {
+      "name": "Reportes",
+      "description": "Ventas por periodo y comparativo entre ventas e inventario para gerencia."
+    },
+    {
+      "name": "Administración",
+      "description": "Carga de los datos de ejemplo del docente (idempotente)."
+    },
+    {
+      "name": "Sistema",
+      "description": "Estado del servicio."
+    }
+  ]
 }

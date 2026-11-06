@@ -32,3 +32,4 @@ ignore = ["B008", "UP042"]  # Depends()/Header()/Query() como valores por defect
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["E501"]  # las pruebas HTTP son más legibles en una sola línea
 "scripts/**" = ["E501"]
+"src/api/aplicacion.py" = ["E501"]  # textos largos de la documentación OpenAPI
