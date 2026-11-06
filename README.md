@@ -9,7 +9,7 @@ y se valida con el paquete de datos del docente (120 casos + 20 transiciones).
 | **Repositorio** | `https://github.com/Sebastian-Esp1/PIA-CLN-EQUIPO-3` |
 | **Despliegue (Swagger UI)** | `https://sazon-urbano-api.onrender.com/docs` |
 | **OpenAPI** | `docs/api/openapi.json` y `/openapi.json` en el despliegue |
-| **Equipo 3** | Jaime Sebastian Esparza Leyva (2097304) · Alan Joel Sánchez García (2082464) · Jorge Alejandro Jiménez González (2097849) |
+| **Equipo 3** | Jaime Sebastian Esparza Leyva (2097304) |
 | **Curso** | Componentes de lógica de negocios · UANL FIME · Docente: Miguel Ángel Gómez Marroquín |
 
 ## Estructura
