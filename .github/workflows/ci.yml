@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  calidad-y-pruebas:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: sazon
+          POSTGRES_PASSWORD: sazon_ci
+          POSTGRES_DB: sazon_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sazon -d sazon_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg2://sazon:sazon_ci@localhost:5432/sazon_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: pip install -r requirements-dev.txt -r requirements.txt
+      - name: Análisis estático (Ruff)
+        run: ruff check .
+      - name: Pruebas unitarias e integración con cobertura mínima de 80 %
+        run: pytest --cov=src --cov-branch --cov-report=term-missing --cov-report=xml --cov-fail-under=80
+      - name: Exportar el contrato OpenAPI
+        run: python scripts/exportar_openapi.py
+      - uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.12'
+        with:
+          name: cobertura
+          path: |
+            coverage.xml
+            docs/api/openapi.json
+
+  docker:
+    needs: calidad-y-pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar docker-compose
+        run: docker compose config -q
+      - name: Construir imagen de producción
+        run: docker build --target prod -t sazon-urbano:ci .
+      - name: Ejecutar pruebas dentro de Docker Compose (DB + App + Tests)
+        run: docker compose --profile test run --rm tests
+      - name: Humo del contenedor
+        run: |
+          docker compose up -d --build app
+          for i in $(seq 1 30); do curl -fs http://localhost:8000/health && break || sleep 2; done
+          curl -fs http://localhost:8000/openapi.json > /dev/null
+          docker compose down -v
