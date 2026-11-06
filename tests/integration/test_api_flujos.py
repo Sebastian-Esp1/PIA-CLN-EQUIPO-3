@@ -295,3 +295,20 @@ def test_api_key_opcional_protege_la_api(datos):
         cuerpo = {"canal": "MESA", "cliente_id": CLIENTE}
         assert c.post("/pedidos", json=cuerpo, headers=MESERO).status_code == 401
         assert c.post("/pedidos", json=cuerpo, headers={**MESERO, "X-API-Key": "secreto"}).status_code == 201
+
+
+def test_documentacion_en_lenguaje_de_negocio(api):
+    """Swagger muestra títulos claros, descripciones y ejemplos realistas, no 'string'."""
+    esquema = api.get("/openapi.json").json()
+    op = esquema["paths"]["/inventario/ingredientes"]["get"]
+    assert op["summary"] == "Ver cuánto hay de cada ingrediente"
+    assert op["responses"]["200"]["description"] == "Existencias de ingredientes"
+    ejemplo = esquema["components"]["schemas"]["IngredienteOut"]["examples"][0]
+    assert ejemplo["nombre"] != "string" and ejemplo["es_critico"] is False
+    sin_titulo = [
+        f"{m} {ruta}"
+        for ruta, ops in esquema["paths"].items()
+        for m, o in ops.items()
+        if not o.get("description") and ruta != "/health"
+    ]
+    assert sin_titulo == []

@@ -9,6 +9,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from src.api import esquemas as es
 from src.api.contenedor import Contenedor, construir_contenedor
+from src.api.textos import aplicar_textos
 from src.application import commands as cmd
 from src.application.ports import Rol, Usuario
 from src.domain import errors as er
@@ -449,6 +450,7 @@ def crear_app(contenedor: Contenedor | None = None) -> FastAPI:
         return {"estado": "ok"}
 
     for router in (pedidos, cocina, productos, inventario, promociones, reportes, admin):
+        aplicar_textos(router)
         app.include_router(router)
     return app
 
