@@ -1,0 +1,11 @@
+stateDiagram-v2
+  [*] --> EN_REGISTRO: iniciar
+  EN_REGISTRO --> CONFIRMADO: confirmar (R1 + disponibilidad + consumo)
+  EN_REGISTRO --> CANCELADO: cancelar(motivo)
+  CONFIRMADO --> EN_PREPARACION: iniciar línea
+  CONFIRMADO --> CANCELADO: cancelar(motivo) + reintegro
+  EN_PREPARACION --> LISTO: todas las líneas listas
+  EN_PREPARACION --> CANCELADO: cancelar(motivo) (merma)
+  LISTO --> CERRADO: cerrar → evento PedidoCerrado
+  CERRADO --> [*]
+  CANCELADO --> [*]

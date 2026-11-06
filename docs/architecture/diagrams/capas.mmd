@@ -1,0 +1,9 @@
+flowchart TB
+  API["<b>api</b> · FastAPI<br/>routers, esquemas Pydantic, errores → HTTP<br/><i>contenedor.py: raíz de composición</i>"]
+  APP["<b>application</b> · casos de uso<br/>Servicios (comandos) · Consultas (DTO) · Puertos"]
+  DOM["<b>domain</b> · reglas de negocio, sin dependencias externas<br/>Aggregates · Domain Services · Specifications · Máquina de estados · Eventos"]
+  INF["<b>infrastructure</b> · adaptadores<br/>SQLAlchemy (SQLite/PostgreSQL) · Unidad de Trabajo · Autorizador por rol · Importación CSV"]
+  API -->|"usa"| APP
+  APP -->|"usa"| DOM
+  INF -->|"implementa los puertos de"| APP
+  API -.->|"construye (inyección)"| INF

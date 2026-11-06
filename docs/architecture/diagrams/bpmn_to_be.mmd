@@ -1,0 +1,23 @@
+flowchart LR
+  subgraph Mesero["Mesero / Caja"]
+    A([Llega pedido]) --> B[Iniciar pedido]
+    B --> C[Agregar productos y modificaciones]
+    C --> G{¿Producto disponible?}
+    G -- Sí --> H[Autorizar y confirmar]
+  end
+  subgraph Sistema["Sistema (API)"]
+    G -- No --> I[Registrar incidencia y avisar]
+    I --> C
+    H --> J[Validar R1 y descontar insumos en 1 transacción]
+  end
+  subgraph Cocina["Cocina"]
+    J --> K[Preparar líneas por estación]
+    K --> L{¿Todas listas?}
+    L -- No --> K
+  end
+  subgraph Cierre["Mesero / Sistema"]
+    L -- Sí --> M[Cerrar pedido y registrar venta] --> N([Pedido entregado])
+  end
+  subgraph Enc["Encargado"]
+    H -. cancelar .-> X[Cancelar con motivo] --> Y([Pedido cancelado])
+  end

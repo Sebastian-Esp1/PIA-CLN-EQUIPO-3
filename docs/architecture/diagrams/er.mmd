@@ -1,0 +1,11 @@
+erDiagram
+  clientes ||--o{ pedidos : realiza
+  pedidos ||--|{ lineas_pedido : contiene
+  pedidos ||--o{ historial_pedido : registra
+  promociones |o--o{ pedidos : aplica
+  productos ||--o{ lineas_pedido : se_vende_en
+  productos ||--|{ recetas : requiere
+  ingredientes ||--o{ recetas : usado_en
+  ingredientes ||--o{ movimientos_inventario : registra
+  pedidos ||--o| ventas_resumen : genera
+  eventos_dominio }o--|| pedidos : bitacora

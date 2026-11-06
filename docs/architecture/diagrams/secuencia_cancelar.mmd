@@ -1,0 +1,24 @@
+sequenceDiagram
+  actor E as Encargado
+  participant API as FastAPI /cancelar
+  participant S as ServicioDePedidos
+  participant A as IAutorizador
+  participant P as Pedido
+  participant C as ConsumoDeIngredientes
+  E->>API: POST /pedidos/{id}/cancelar {motivo}
+  API->>S: CancelarPedido
+  S->>A: puede(usuario, CANCELAR_PEDIDO)
+  alt rol sin permiso
+    A-->>API: 403 NO_AUTORIZADO
+  else autorizado
+    S->>P: cancelar(motivo, usuario, ahora)
+    alt motivo vacío / estado LISTO o CERRADO
+      P-->>API: 422 MOTIVO_REQUERIDO · 409 CANCELACION_NO_PERMITIDA
+    else válido
+      P-->>S: estado previo
+      opt estado previo = CONFIRMADO (SP-08)
+        S->>C: reintegrar(pedido)
+      end
+      S-->>API: PedidoDto CANCELADO
+    end
+  end

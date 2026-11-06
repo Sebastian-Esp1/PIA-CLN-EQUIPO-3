@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="defs" targetNamespace="http://sazon-urbano/bpmn">
+<collaboration id="col"><participant id="part" name="Sazón Urbano (TO-BE)" processRef="proc"/></collaboration>
+<process id="proc" isExecutable="false"><laneSet id="ls">
+<lane id="lane0" name="Mesero / Caja"><flowNodeRef>ini</flowNodeRef><flowNodeRef>t1</flowNodeRef><flowNodeRef>t2</flowNodeRef><flowNodeRef>t4</flowNodeRef><flowNodeRef>fin</flowNodeRef></lane>
+<lane id="lane1" name="Sistema (API)"><flowNodeRef>g1</flowNodeRef><flowNodeRef>t3</flowNodeRef><flowNodeRef>t5</flowNodeRef><flowNodeRef>t7</flowNodeRef></lane>
+<lane id="lane2" name="Cocina"><flowNodeRef>t6</flowNodeRef><flowNodeRef>g2</flowNodeRef></lane>
+<lane id="lane3" name="Encargado"><flowNodeRef>t8</flowNodeRef><flowNodeRef>fin2</flowNodeRef></lane>
+</laneSet>
+<startEvent id="ini" name="Llega pedido"><outgoing>f_ini_t1</outgoing></startEvent>
+<task id="t1" name="Iniciar pedido (canal, cliente)"><incoming>f_ini_t1</incoming><outgoing>f_t1_t2</outgoing></task>
+<task id="t2" name="Agregar producto y modificaciones"><incoming>f_t1_t2</incoming><incoming>f_t3_t2</incoming><outgoing>f_t2_g1</outgoing></task>
+<exclusiveGateway id="g1" name="¿Producto disponible?"><incoming>f_t2_g1</incoming><outgoing>f_g1_t3</outgoing><outgoing>f_g1_t4</outgoing></exclusiveGateway>
+<task id="t3" name="Registrar incidencia y avisar"><incoming>f_g1_t3</incoming><outgoing>f_t3_t2</outgoing></task>
+<task id="t4" name="Autorizar y confirmar pedido"><incoming>f_g1_t4</incoming><outgoing>f_t4_t5</outgoing><outgoing>f_t4_t8</outgoing></task>
+<task id="t5" name="Validar R1, descontar insumos (1 transacción)"><incoming>f_t4_t5</incoming><outgoing>f_t5_t6</outgoing></task>
+<task id="t6" name="Preparar líneas por estación"><incoming>f_t5_t6</incoming><incoming>f_g2_t6</incoming><outgoing>f_t6_g2</outgoing></task>
+<exclusiveGateway id="g2" name="¿Todas las líneas listas?"><incoming>f_t6_g2</incoming><outgoing>f_g2_t6</outgoing><outgoing>f_g2_t7</outgoing></exclusiveGateway>
+<task id="t7" name="Cerrar pedido y registrar venta"><incoming>f_g2_t7</incoming><outgoing>f_t7_fin</outgoing></task>
+<endEvent id="fin" name="Pedido entregado"><incoming>f_t7_fin</incoming></endEvent>
+<task id="t8" name="Cancelar con motivo (si aplica)"><incoming>f_t4_t8</incoming><outgoing>f_t8_fin2</outgoing></task>
+<endEvent id="fin2" name="Pedido cancelado"><incoming>f_t8_fin2</incoming></endEvent>
+<sequenceFlow id="f_ini_t1" name="" sourceRef="ini" targetRef="t1"/>
+<sequenceFlow id="f_t1_t2" name="" sourceRef="t1" targetRef="t2"/>
+<sequenceFlow id="f_t2_g1" name="" sourceRef="t2" targetRef="g1"/>
+<sequenceFlow id="f_g1_t3" name="No" sourceRef="g1" targetRef="t3"/>
+<sequenceFlow id="f_t3_t2" name="corregir" sourceRef="t3" targetRef="t2"/>
+<sequenceFlow id="f_g1_t4" name="Sí" sourceRef="g1" targetRef="t4"/>
+<sequenceFlow id="f_t4_t5" name="" sourceRef="t4" targetRef="t5"/>
+<sequenceFlow id="f_t5_t6" name="" sourceRef="t5" targetRef="t6"/>
+<sequenceFlow id="f_t6_g2" name="" sourceRef="t6" targetRef="g2"/>
+<sequenceFlow id="f_g2_t6" name="No" sourceRef="g2" targetRef="t6"/>
+<sequenceFlow id="f_g2_t7" name="Sí" sourceRef="g2" targetRef="t7"/>
+<sequenceFlow id="f_t7_fin" name="" sourceRef="t7" targetRef="fin"/>
+<sequenceFlow id="f_t4_t8" name="cancelar" sourceRef="t4" targetRef="t8"/>
+<sequenceFlow id="f_t8_fin2" name="" sourceRef="t8" targetRef="fin2"/>
+</process><bpmndi:BPMNDiagram id="d"><bpmndi:BPMNPlane id="p" bpmnElement="col">
+<bpmndi:BPMNShape id="s_part" bpmnElement="part" isHorizontal="true"><dc:Bounds x="20" y="0" width="1930" height="520"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_lane0" bpmnElement="lane0" isHorizontal="true"><dc:Bounds x="50" y="0" width="1900" height="130"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_lane1" bpmnElement="lane1" isHorizontal="true"><dc:Bounds x="50" y="130" width="1900" height="130"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_lane2" bpmnElement="lane2" isHorizontal="true"><dc:Bounds x="50" y="260" width="1900" height="130"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_lane3" bpmnElement="lane3" isHorizontal="true"><dc:Bounds x="50" y="390" width="1900" height="130"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_ini" bpmnElement="ini"><dc:Bounds x="217" y="47" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t1" bpmnElement="t1"><dc:Bounds x="330" y="35" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t2" bpmnElement="t2"><dc:Bounds x="490" y="35" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_g1" bpmnElement="g1"><dc:Bounds x="690" y="170" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t3" bpmnElement="t3"><dc:Bounds x="810" y="165" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t4" bpmnElement="t4"><dc:Bounds x="970" y="35" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t5" bpmnElement="t5"><dc:Bounds x="1130" y="165" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t6" bpmnElement="t6"><dc:Bounds x="1290" y="295" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_g2" bpmnElement="g2"><dc:Bounds x="1490" y="300" width="50" height="50"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t7" bpmnElement="t7"><dc:Bounds x="1610" y="165" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_fin" bpmnElement="fin"><dc:Bounds x="1817" y="47" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_t8" bpmnElement="t8"><dc:Bounds x="970" y="425" width="130" height="60"/></bpmndi:BPMNShape>
+<bpmndi:BPMNShape id="s_fin2" bpmnElement="fin2"><dc:Bounds x="1177" y="437" width="36" height="36"/></bpmndi:BPMNShape>
+<bpmndi:BPMNEdge id="e_ini_t1" bpmnElement="f_ini_t1"><di:waypoint x="253" y="65"/><di:waypoint x="263" y="65"/><di:waypoint x="263" y="65"/><di:waypoint x="330" y="65"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t1_t2" bpmnElement="f_t1_t2"><di:waypoint x="460" y="65"/><di:waypoint x="470" y="65"/><di:waypoint x="470" y="65"/><di:waypoint x="490" y="65"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t2_g1" bpmnElement="f_t2_g1"><di:waypoint x="620" y="65"/><di:waypoint x="630" y="65"/><di:waypoint x="630" y="195"/><di:waypoint x="690" y="195"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_g1_t3" bpmnElement="f_g1_t3"><di:waypoint x="740" y="195"/><di:waypoint x="750" y="195"/><di:waypoint x="750" y="195"/><di:waypoint x="810" y="195"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t3_t2" bpmnElement="f_t3_t2"><di:waypoint x="875" y="165"/><di:waypoint x="875" y="125"/><di:waypoint x="555" y="125"/><di:waypoint x="555" y="35"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_g1_t4" bpmnElement="f_g1_t4"><di:waypoint x="740" y="195"/><di:waypoint x="750" y="195"/><di:waypoint x="750" y="65"/><di:waypoint x="970" y="65"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t4_t5" bpmnElement="f_t4_t5"><di:waypoint x="1100" y="65"/><di:waypoint x="1110" y="65"/><di:waypoint x="1110" y="195"/><di:waypoint x="1130" y="195"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t5_t6" bpmnElement="f_t5_t6"><di:waypoint x="1260" y="195"/><di:waypoint x="1270" y="195"/><di:waypoint x="1270" y="325"/><di:waypoint x="1290" y="325"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t6_g2" bpmnElement="f_t6_g2"><di:waypoint x="1420" y="325"/><di:waypoint x="1430" y="325"/><di:waypoint x="1430" y="325"/><di:waypoint x="1490" y="325"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_g2_t6" bpmnElement="f_g2_t6"><di:waypoint x="1515" y="300"/><di:waypoint x="1515" y="260"/><di:waypoint x="1355" y="260"/><di:waypoint x="1355" y="295"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_g2_t7" bpmnElement="f_g2_t7"><di:waypoint x="1540" y="325"/><di:waypoint x="1550" y="325"/><di:waypoint x="1550" y="195"/><di:waypoint x="1610" y="195"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t7_fin" bpmnElement="f_t7_fin"><di:waypoint x="1740" y="195"/><di:waypoint x="1750" y="195"/><di:waypoint x="1750" y="65"/><di:waypoint x="1817" y="65"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t4_t8" bpmnElement="f_t4_t8"><di:waypoint x="1035" y="35"/><di:waypoint x="1035" y="-5"/><di:waypoint x="1035" y="-5"/><di:waypoint x="1035" y="425"/></bpmndi:BPMNEdge>
+<bpmndi:BPMNEdge id="e_t8_fin2" bpmnElement="f_t8_fin2"><di:waypoint x="1100" y="455"/><di:waypoint x="1110" y="455"/><di:waypoint x="1110" y="455"/><di:waypoint x="1177" y="455"/></bpmndi:BPMNEdge>
+</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></definitions>

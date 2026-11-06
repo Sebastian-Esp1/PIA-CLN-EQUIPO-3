@@ -1,0 +1,56 @@
+classDiagram
+  class Pedido {
+    +pedido_id
+    +estado: EstadoPedido
+    +canal: CanalVenta
+    +version
+    +iniciar()
+    +agregar_linea()
+    +agregar_modificacion()
+    +autorizar()
+    +confirmar()
+    +iniciar_preparacion_de_linea()
+    +marcar_linea_lista()
+    +cerrar()
+    +cancelar()
+    +total / total_a_pagar
+  }
+  class LineaPedido {
+    +linea_id
+    +producto_id
+    +cantidad
+    +precio_unitario
+    +estacion
+    +estado_preparacion
+  }
+  class Modificacion { +tipo +descripcion }
+  class RegistroDeCambio { +accion +usuario +fecha +detalle }
+  class Cancelacion { +motivo +usuario +fecha }
+  class Producto { +producto_id +precio +estacion +agotado +receta }
+  class RequerimientoIngrediente { +ingrediente_id +cantidad }
+  class Ingrediente { +existencia +umbral +es_critico +registrar_entrada() +registrar_salida() +registrar_conteo() }
+  class MovimientoInventario { +tipo +delta +existencia_resultante }
+  class Promocion { +ventana +condiciones +descuento_pct +evaluar() }
+  class Cliente { +activo +es_preferente }
+  class DisponibilidadProductos { +evaluar() }
+  class ConsumoDeIngredientes { +descontar() +reintegrar() }
+  class EvaluadorPromociones { +aplicable() }
+  class Specification { +es_satisfecha_por() &, |, ~ }
+  Pedido "1" *-- "1..*" LineaPedido
+  LineaPedido "1" *-- "0..*" Modificacion
+  Pedido "1" *-- "1..*" RegistroDeCambio
+  Pedido "1" *-- "0..1" Cancelacion
+  Producto "1" *-- "1..*" RequerimientoIngrediente
+  Ingrediente "1" *-- "0..*" MovimientoInventario
+  RequerimientoIngrediente ..> Ingrediente : referencia por id
+  Pedido ..> Cliente : referencia por id
+  DisponibilidadProductos ..> Producto
+  DisponibilidadProductos ..> Ingrediente
+  ConsumoDeIngredientes ..> Pedido
+  ConsumoDeIngredientes ..> Ingrediente
+  EvaluadorPromociones ..> Promocion
+  Pedido ..> Specification : puede_procesarse() / califica_beneficio()
+  <<service>> DisponibilidadProductos
+  <<service>> ConsumoDeIngredientes
+  <<service>> EvaluadorPromociones
+  <<abstract>> Specification

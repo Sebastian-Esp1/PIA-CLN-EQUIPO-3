@@ -1,0 +1,10 @@
+flowchart LR
+  Dev["Desarrollador<br/>git push"] --> GH["GitHub<br/>repositorio + Actions"]
+  GH -->|"ruff · pytest ≥80 % · docker compose"| CI{{"CI verde"}}
+  GH -->|"auto-deploy (main)"| R["Render / Railway<br/>contenedor Docker (target prod)"]
+  R --> PG[("PostgreSQL gestionado")]
+  U["Usuario / Docente"] -->|"HTTPS /docs · /openapi.json"| R
+  subgraph Local["Docker Compose local"]
+    A["app :8000"] --> D[("db postgres:16")]
+    T["tests (perfil test)"] --> D
+  end

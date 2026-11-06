@@ -1,0 +1,26 @@
+sequenceDiagram
+  actor M as Mesero
+  participant API as FastAPI /confirmar
+  participant S as ServicioDePedidos
+  participant UoW as UnidadDeTrabajo
+  participant P as Pedido
+  participant C as ConsumoDeIngredientes
+  participant DB as Base de datos
+  M->>API: POST /pedidos/{id}/confirmar (X-Rol: MESERO)
+  API->>S: ConfirmarPedido
+  S->>UoW: abrir transacción
+  S->>UoW: cargar Pedido, Cliente, Productos, Ingredientes, Promociones
+  S->>P: confirmar(usuario, cliente, ahora, promoción)
+  P->>P: puede_procesarse() (R1) · califica_beneficio() (R2) · estado → CONFIRMADO
+  S->>C: descontar(pedido, productos, ingredientes)
+  alt existencia insuficiente
+    C-->>S: ExistenciaInsuficiente
+    S->>UoW: revertir()
+    S-->>API: error 409
+  else todo correcto
+    S->>UoW: guardar pedido e ingredientes (versión +1)
+    UoW->>DB: COMMIT (+ bitácora de eventos)
+    UoW->>UoW: publicar eventos tras el commit
+    S-->>API: PedidoDto
+    API-->>M: 200 CONFIRMADO
+  end
