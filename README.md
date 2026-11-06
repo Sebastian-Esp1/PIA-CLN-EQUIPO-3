@@ -22,7 +22,7 @@ src/domain/                      Aggregates, Value Objects, Specifications, máq
 src/application/                 servicios (comandos), consultas (DTO), puertos
 src/infrastructure/              SQLAlchemy, Unidad de Trabajo, autorizador, importación CSV
 src/api/                         FastAPI, esquemas, raíz de composición
-tests/unit  tests/integration    268 pruebas (unitarias e integración)
+tests/unit  tests/integration    275 pruebas en total: 95 unitarias (incluye 5 de diagramas) y 180 de integración
 data/                            paquete CSV del docente (datos ficticios)
 Dockerfile · docker-compose.yml · .env.example · render.yaml · .github/workflows/ci.yml
 ```
@@ -51,7 +51,7 @@ pytest -m unit          # solo dominio
 pytest -m integration   # repositorios, API y paquete del docente
 python scripts/exportar_openapi.py              # regenera docs/api/openapi.json
 ```
-Resultado actual: **267 pruebas en verde (1 más se omite sin PostgreSQL), cobertura 98.5 %** (mínimo exigido 80 %), Ruff sin observaciones.
+Resultado actual: **274 pruebas en verde de 275** (la que falta es la de PostgreSQL, que se omite en local y corre en CI y Docker), **cobertura 98.5 %** (mínimo exigido 80 %), Ruff sin observaciones.
 
 ## Uso rápido (demo)
 Autenticación simulada por encabezados (ADR-09): `X-Usuario` y `X-Rol` (`MESERO`, `COCINERO`, `ENCARGADO`, `GERENTE`); `X-API-Key` solo si el servidor define `API_KEY`.

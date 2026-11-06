@@ -2,7 +2,7 @@ sequenceDiagram
   actor M as Mesero
   participant API as FastAPI /confirmar
   participant S as ServicioDePedidos
-  participant UoW as UnidadDeTrabajo
+  participant UoW as UnidadDeTrabajoSql (IUnitOfWork)
   participant P as Pedido
   participant C as ConsumoDeIngredientes
   participant DB as Base de datos

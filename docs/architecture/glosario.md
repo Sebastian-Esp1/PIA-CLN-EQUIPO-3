@@ -23,4 +23,20 @@ Glosario original de la Unidad 2 (`requirements/originales_unidad2/Glosario de d
 | 17 | Venta | Registro derivado de un pedido procesado y cerrado | `VentaResumen` |
 | 18–26 | BPMN, compuertas XOR/AND/OR, AS-IS, flujo, evento de inicio/fin, actividad | Términos de notación de procesos | `bpmn_as_is_unidad2.svg`, `bpmn_to_be.bpmn` |
 
-Términos nuevos del PIA (no estaban en la Unidad 2): **Receta**, **Umbral crítico**, **Estado del pedido**, **Beneficio preferente** (regla R2 del docente), **Cliente** (entidad con activo/preferente).
+## Términos añadidos en el PIA
+
+No estaban en el glosario de la Unidad 2; el equipo los agregó porque el código y la API los usan.
+
+| No. | Término | Definición | En el código |
+|---|---|---|---|
+| 27 | Línea de pedido | Renglón de un pedido: un producto con su cantidad, precio, estación y estado de preparación; puede llevar modificaciones | `LineaPedido` |
+| 28 | Comanda | Orden de trabajo que recibe una estación de cocina: las líneas confirmadas de uno o más pedidos que debe preparar, con sus modificaciones | consulta `consultar_ordenes_de_estacion`, `GET /cocina/estaciones/{estacion}/ordenes`, `OrdenEstacionOut` |
+| 29 | Estado del pedido | Etapa en la que va un pedido: EN_REGISTRO, CONFIRMADO, EN_PREPARACION, LISTO, CERRADO o CANCELADO. Solo se permiten las transiciones de la máquina de estados | `EstadoPedido`, `MAQUINA_PEDIDO` |
+| 30 | Receta | Lista de ingredientes y cantidades que consume un producto | `Producto.receta`, `RequerimientoIngrediente` |
+| 31 | Umbral crítico | Cantidad mínima de un ingrediente; al alcanzarla se considera crítico | `Ingrediente.umbral`, `UmbralCritico` |
+| 32 | Beneficio preferente | Descuento al que tiene derecho un cliente preferente (regla R2 del paquete del docente) | `califica_beneficio()`, `BeneficioPreferenteAplicado` |
+| 33 | Cliente | Persona que hace pedidos; puede estar activo o inactivo y ser preferente | `Cliente` |
+| 34 | Rol y usuario | Quién opera la API (MESERO, COCINERO, ENCARGADO o GERENTE) y qué acciones le corresponden | `Usuario`, `Rol`, `AutorizadorPorRol` |
+| 35 | Movimiento de inventario | Entrada, salida o conteo que cambia la existencia de un ingrediente | `MovimientoInventario` |
+| 36 | Evento de dominio | Hecho relevante ya ocurrido (pedido confirmado, producto agotado…) que se registra en la bitácora | `EventoDeDominio` y subclases |
+| 37 | Unidad de trabajo | Transacción que guarda todos los cambios de una operación o ninguno | `IUnitOfWork`, `UnidadDeTrabajoSql` |
