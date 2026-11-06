@@ -9,6 +9,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 
 from src.api import esquemas as es
 from src.api.contenedor import Contenedor, construir_contenedor
+from src.api.tabla_amigable import TABLA_AMIGABLE
 from src.api.textos import aplicar_textos
 from src.application import commands as cmd
 from src.application.ports import Rol, Usuario
@@ -442,7 +443,7 @@ def crear_app(contenedor: Contenedor | None = None) -> FastAPI:
             title="Sazón Urbano · API",
             swagger_ui_parameters=app.swagger_ui_parameters,
         )
-        cuerpo = pagina.body.decode().replace("</head>", ESTILO_DOCS + "</head>")
+        cuerpo = pagina.body.decode().replace("</head>", ESTILO_DOCS + TABLA_AMIGABLE + "</head>")
         return HTMLResponse(cuerpo)
 
     @app.get("/health", tags=["Sistema"], summary="Estado del servicio")

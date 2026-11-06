@@ -312,3 +312,10 @@ def test_documentacion_en_lenguaje_de_negocio(api):
         if not o.get("description") and ruta != "/health"
     ]
     assert sin_titulo == []
+
+
+def test_docs_incluye_tabla_amigable_para_respuestas(api):
+    """La página /docs trae el complemento que muestra las respuestas como tabla (Sí/No)."""
+    html = api.get("/docs").text
+    assert "tabla-amigable" in html and "Ver datos técnicos" in html
+    assert '"¿Crítico?"' in html
