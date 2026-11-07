@@ -7,7 +7,7 @@ Los diagramas se verifican contra el código implementado con `tests/unit/test_d
 | `dominio` (clases DDD) | Las 15 clases existen en `src/domain`; cada atributo y método dibujado existe; las 6 relaciones de composición (Pedido→LineaPedido, LineaPedido→Modificacion, Pedido→RegistroDeCambio, Pedido→Cancelacion, Producto→RequerimientoIngrediente, Ingrediente→MovimientoInventario) están implementadas | Coincide |
 | `estados` | Las 9 transiciones dibujadas son exactamente las de `MAQUINA_PEDIDO` | Coincide |
 | `er` | Las 11 tablas dibujadas son exactamente las de `src/infrastructure/modelos.py`; las relaciones con llave foránea real están declaradas con `ForeignKey` | Coincide |
-| `secuencia_confirmar` / `secuencia_cancelar` | Participantes y mensajes siguen `ServicioDePedidos.confirmar_pedido` y `cancelar_pedido` | Coincide |
+| `secuencia_confirmar` / `secuencia_cancelar` | Participantes y mensajes siguen `ServicioDePedidos.confirmar_pedido` (incluye la re-validación de disponibilidad, RN-02) y `cancelar_pedido` | Coincide |
 | `capas` | `src/domain` no importa `application`, `infrastructure`, `api`, SQLAlchemy, FastAPI ni Pydantic | Coincide |
 
 ## Aclaraciones sobre cómo se representó el código

@@ -12,9 +12,10 @@ sequenceDiagram
   S->>UoW: cargar Pedido, Cliente, Productos, Ingredientes, Promociones
   S->>P: confirmar(usuario, cliente, ahora, promoción)
   P->>P: puede_procesarse() (R1) · califica_beneficio() (R2) · estado → CONFIRMADO
+  S->>S: validar disponibilidad de cada línea (RN-02)
   S->>C: descontar(pedido, productos, ingredientes)
-  alt existencia insuficiente
-    C-->>S: ExistenciaInsuficiente
+  alt falta disponibilidad o existencia
+    Note over S,C: ProductoNoDisponible o ExistenciaInsuficiente
     S->>UoW: revertir()
     S-->>API: error 409
   else todo correcto
